@@ -15,15 +15,17 @@ datasource db {
 }
 
 model Problem{
-  id          Int       @id @default(autoincrement())
-  title       String
-  difficult   String
-  tag         String
-  link        String?
-  notes       String?
-  user        User      @relation(fields: [userId], references: [id])
-  userId      Int
-  createdAt   DateTime  @default(now())
+  id            Int       @id @default(autoincrement())
+  title         String
+  difficult     String
+  tag           String
+  link          String?
+  notes         String?
+  needRevision  Boolean   @default(false)
+  reference     String?
+  user          User      @relation(fields: [userId], references: [id])
+  userId        Int
+  createdAt     DateTime  @default(now())
 }
 
 model User {
