@@ -24,9 +24,16 @@ export const createProblem = async(req:Request,res:Response): Promise<void> => {
 export const getAllProblems = async(req:Request,res:Response) => {
     try {
         const userId = (req as any).user.userId
-        const problems = await ProblemService.getAllProblems(userId)
+        const {search,difficulty,topic,revision} = req.query
+        const problems = await ProblemService.getAllProblems(
+            userId,
+            search as string | undefined,
+            topic as string | undefined,
+            difficulty as string | undefined, 
+            revision  === 'true' ? true : revision === 'false' ? false : undefined
+        )
         if (problems.length === 0) {
-            res.status(200).json({success:true,message:"No problems have been added yet",data:[]})
+            res.status(200).json({success:true,message:"No problems found",data:[]})
             return;
         }
         res.status(200).json({success:true,data:problems,message:"Problem retrieved successfully"})

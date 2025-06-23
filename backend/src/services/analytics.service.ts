@@ -8,15 +8,15 @@ export const getSummary = async(userId: number) => {
     })
 
     const easy = await prisma.problem.count({
-        where:{userId, difficult: "Easy"}
+        where:{userId, difficulty: "Easy"}
     })
 
     const medium = await prisma.problem.count({
-        where:{userId, difficult: "Medium"}
+        where:{userId, difficulty: "Medium"}
     })
 
     const hard = await prisma.problem.count({
-        where:{userId, difficult: "Hard"}
+        where:{userId, difficulty: "Hard"}
     })
 
     return {
@@ -30,14 +30,14 @@ export const getSummary = async(userId: number) => {
 
 export const topicWiseCount = async(userId: number) => {
     const result = await prisma.problem.groupBy({
-        by: ['tag'],
+        by: ['topic'],
         where:{userId},
         _count : true
     })
    
     return result.map((item)=> (
         {
-            tag: item.tag,
+            topic: item.topic,
             count: item._count
         }
 
@@ -60,4 +60,3 @@ export const getDailyStats = async(userId: number) => {
         count
     }))
 }
-

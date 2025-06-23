@@ -17,8 +17,8 @@ datasource db {
 model Problem{
   id            Int       @id @default(autoincrement())
   title         String
-  difficult     String
-  tag           String
+  difficulty    String?
+  topic         String?
   link          String?
   notes         String?
   needRevision  Boolean   @default(false)
