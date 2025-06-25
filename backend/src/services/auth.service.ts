@@ -39,3 +39,12 @@ export const login = async(email:string, password: string) => {
     const {password:_,...userWithoutPassword} = user
     return {user:userWithoutPassword,token}
 }
+
+export const getUser = async(userId: number) => {   
+    const user = await prisma.user.findUnique({
+        where: {id:userId},
+        select:{id:true,email:true,createdAt:true}
+    })
+
+    return user
+}

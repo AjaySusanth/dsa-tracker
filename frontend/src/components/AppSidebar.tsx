@@ -15,7 +15,11 @@ import {
 } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { useAuth } from "@/hooks/useAuth"
+import { useState } from "react"
+import { Loader } from "./ui/loader"
+import { toast } from "sonner"
 
 const data = {
   user: {
@@ -43,6 +47,25 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [loading, setLoading] = useState(false)
+  const { logout } = useAuth()
+  const navigate = useNavigate()
+
+
+  const handleLogout = async() => {
+    try {
+      setLoading(true)
+      await logout()
+      toast.success("Logged out succesfully")
+      navigate('/')
+    } catch (err:any) {
+      toast.error(err?.response?.data.message || "Logout failed")
+      console.log(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <Sidebar variant="inset" {...props} className="bg-slate-950/70 border-slate-800/20 backdrop-blur-md">
       <SidebarHeader>
@@ -120,9 +143,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <Settings className="w-4 h-4 mr-2" />
                   Settings
                 </DropdownMenuItem>
-                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-800">
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Log out
+                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-800" 
+                onSelect={handleLogout}>
+                  {
+                    loading ? (
+                      <>
+                        <Loader size="sm" variant="dots" className="mr-2" />
+                        Logging out...
+                      </>
+                    )
+                    : (
+                      <>
+                        <LogOut className="w-4 h-4 mr-2" />
+                        Logout
+                      </>
+                    )
+                  }
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

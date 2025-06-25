@@ -6,12 +6,18 @@ interface JWTPayload {
 }
 
 export const authenticate = (req:Request,res:Response,next:NextFunction) => {
+    let token:string | undefined;
     const authHeader = req.headers.authorization
-    if (!authHeader || !authHeader.startsWith('Bearer')) {
-        return res.status(401).json({success:false,message:"Token missing"})
+    if (authHeader && authHeader.startsWith('Bearer')) {
+        token = authHeader.split(" ")[1]
     }
-
-    const token = authHeader.split(" ")[1]
+    if (!token && req.cookies && req.cookies.token) {
+        token = req.cookies.token;
+    }
+    if (!token) {
+        return res.status(401).json({ success: false, message: "Token missing" });
+    }
+    
     try {
         const decoded = jwt.verify(token,process.env.JWT_SECRET as string) as JWTPayload
         (req as any).user = {userId: decoded.userId}

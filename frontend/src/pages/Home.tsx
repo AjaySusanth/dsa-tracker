@@ -2,9 +2,15 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight, BarChart3, Target, TrendingUp, Zap, CheckCircle } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, Navigate } from "react-router-dom"
+import { useAuth } from "@/hooks/useAuth"
+import { PageLoader } from "@/components/ui/loader"
 
 function Home() {
+  const {isAuthenticated,loading} = useAuth()
+
+  if (loading) return <PageLoader text="Unlocking your DSA journey"/>
+  if (isAuthenticated) return <Navigate to='/dashboard'/>
   return (
         <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       {/* Navigation */}
