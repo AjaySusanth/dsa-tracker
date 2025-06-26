@@ -5,7 +5,7 @@ export const getSummary = async(req:Request, res:Response) => {
     try {
         const userId = (req as any).user.userId
         const summary = await AnalyticsService.getSummary(userId)
-        res.status(200).json({success:true, data:summary})
+        res.status(200).json({success:true, summary, message:"Summary fetched successfully"})
     } catch (err:unknown) {
 
         if (err instanceof Error){

@@ -28,6 +28,7 @@ import { Loader } from "./ui/loader";
 interface ProblemModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onProblemAdd?: () => void;
 }
 
 const topics = [
@@ -46,7 +47,7 @@ const topics = [
   "Backtracking",
 ];
 
-function ProblemModal({ isOpen, onClose }: ProblemModalProps) {
+function ProblemModal({ isOpen, onClose, onProblemAdd }: ProblemModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({
@@ -69,6 +70,7 @@ function ProblemModal({ isOpen, onClose }: ProblemModalProps) {
         //className: 'toast-success',
         duration: 4000
       })
+      if (onProblemAdd) onProblemAdd()
       onClose();
       setFormData({
         title: "",
@@ -80,8 +82,8 @@ function ProblemModal({ isOpen, onClose }: ProblemModalProps) {
         needRevision: false,
     });
     } catch (err: any) {
-      setError(err?.response?.data.message || "Failed to add problem");
-      console.log(err.message);
+      setError(err?.response?.data?.message || "Failed to add problem");
+      console.error("Problem add modal error: ",err);
     } finally {
       setLoading(false);
     }

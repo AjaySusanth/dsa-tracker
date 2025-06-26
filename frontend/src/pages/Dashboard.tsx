@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Plus, TrendingUp, Target, Calendar, Flame } from "lucide-react"
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import ProblemModal from "@/components/ProblemModal"
+import API from "@/lib/Axios"
+import { CardLoader } from "@/components/ui/loader"
 
 
 const topicData = [
@@ -17,14 +19,43 @@ const topicData = [
   { name: "DP", value: 12, color: "#ef4444" },
 ]
 
-const difficultyData = [
-  { name: "Easy", value: 68, color: "#10b981" },
-  { name: "Medium", value: 45, color: "#f59e0b" },
-  { name: "Hard", value: 19, color: "#ef4444" },
-]
 
 export default function Dashboard() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [totalProblems,setTotalProblems] = useState(0)
+  const [difficultyData,setDifficultyData] = useState([
+    { name: "Easy", value: 0, color: "#10b981" },
+    { name: "Medium", value: 0, color: "#f59e0b" },
+    { name: "Hard", value: 0, color: "#ef4444" },
+  ])
+
+  const [loading,setLoading] = useState(true)
+  const [error,setError] = useState("")
+
+
+  const fetchSummary = async() => {
+    try {
+      setError("")
+      setLoading(true)
+      const res = await API.get('/analytics/summary')
+      setDifficultyData([
+      { name: "Easy", value: res?.data?.summary.easy, color: "#10b981" },
+      { name: "Medium", value:  res?.data?.summary.medium, color: "#f59e0b" },
+      { name: "Hard", value:  res?.data?.summary.hard, color: "#ef4444" },
+      ])
+      setTotalProblems(res?.data?.summary.total)
+    } catch (err: any) {
+      setError(err?.response?.data?.message || "Failed to fetch data")
+      console.error("Dashboard fetch error",err);
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(()=> {
+    fetchSummary()
+  },[])
+
 
   return (
     <div className="space-y-8 px-12 py-6">
@@ -144,7 +175,12 @@ export default function Dashboard() {
             <CardDescription className="text-slate-400">Problems by difficulty level</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            {
+              loading ? <CardLoader/>
+              : error ? (
+                 <div className="text-center text-red-400">{error}</div>
+              ) : (
+                 <div className="space-y-4">
               {difficultyData.map((item) => (
                 <div key={item.name} className="space-y-2">
                   <div className="flex justify-between items-center">
@@ -152,7 +188,7 @@ export default function Dashboard() {
                     <span className="text-sm text-slate-400">{item.value} problems</span>
                   </div>
                   <Progress
-                    value={(item.value / 132) * 100}
+                    value={(item.value / totalProblems) * 100}
                     className="h-2"
                     style={{
                       background: "rgba(30, 41, 59, 0.5)",
@@ -161,6 +197,8 @@ export default function Dashboard() {
                 </div>
               ))}
             </div>
+              )
+            } 
             <div className="mt-6 p-4 bg-slate-900/30 backdrop-blur-sm rounded-lg border border-slate-800/20">
               <div className="text-sm text-slate-400 mb-2">Completion Rate</div>
               <div className="text-2xl font-bold text-white">
@@ -171,7 +209,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
-            <ProblemModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />
+            <ProblemModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onProblemAdd={fetchSummary} />
       </div>
 
 
