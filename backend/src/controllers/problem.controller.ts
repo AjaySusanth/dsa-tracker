@@ -6,7 +6,7 @@ export const createProblem = async(req:Request,res:Response): Promise<void> => {
     try {
         const userId = (req as any).user.userId
         const problem = await ProblemService.createProblem(req.body,userId)
-        res.status(201).json({success:true,data:problem,message:"Problem created successfully"})
+        res.status(201).json({success:true,problem,message:"Problem created successfully"})
     } catch (err: unknown) {
         if (err instanceof Error){
             console.error(err.message)

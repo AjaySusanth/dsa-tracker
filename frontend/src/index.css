@@ -1,2 +1,35 @@
 @import "tailwindcss";
 
+/* For Webkit browsers (Chrome, Safari, Edge) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px; /* width of the scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent; /* color of the tracking area */
+  border-radius: 10px; /* rounded corners for the track */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #475569; /* color of the scroll thumb (slate-700) */
+  border-radius: 10px; /* rounded corners for the thumb */
+  border: 2px solid transparent; /* adds a bit of padding around the thumb */
+  background-clip: padding-box; /* ensures the border is within the thumb */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #64748b; /* color of the scroll thumb on hover (slate-600) */
+}
+
+/* For Firefox (requires a different syntax) */
+/* You'll need to add a utility in your tailwind.config.js for this if you want to use it directly */
+/* Or apply this in your global CSS */
+/* For example:
+  @supports (scrollbar-color: auto) {
+    .custom-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: #475569 transparent; /* thumb color track color 
+    }
+  }*/
+
+
