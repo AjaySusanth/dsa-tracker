@@ -21,6 +21,9 @@
   background-color: #64748b; /* color of the scroll thumb on hover (slate-600) */
 }
 
+.problems-table button:has(>svg) {
+  padding-inline: 0 !important;
+}
 /* For Firefox (requires a different syntax) */
 /* You'll need to add a utility in your tailwind.config.js for this if you want to use it directly */
 /* Or apply this in your global CSS */

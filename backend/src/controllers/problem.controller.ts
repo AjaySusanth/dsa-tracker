@@ -33,10 +33,10 @@ export const getAllProblems = async(req:Request,res:Response) => {
             revision  === 'true' ? true : revision === 'false' ? false : undefined
         )
         if (problems.length === 0) {
-            res.status(200).json({success:true,message:"No problems found",data:[]})
+            res.status(200).json({success:true,message:"No problems found",problems:[]})
             return;
         }
-        res.status(200).json({success:true,data:problems,message:"Problem retrieved successfully"})
+        res.status(200).json({success:true,problems,message:"Problem retrieved successfully"})
     } catch (err: unknown) {
         if (err instanceof Error){
             console.error(err.message)
