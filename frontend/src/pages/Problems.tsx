@@ -128,6 +128,11 @@ export default function ProblemsPage() {
     }
   }
 
+  const handleUpdateProblem = (problem: Problem) => {
+    setSelectedProblem(problem)
+    setIsAddModalOpen(true)
+  }
+
   useEffect(()=> {
     fetchAllProblems()
   },[search,selectedTopic,selectedDifficulty,revision])
@@ -397,6 +402,7 @@ export default function ProblemsPage() {
                               size="sm"
                               variant="ghost"
                               className="text-slate-400 hover:text-white hover:bg-slate-800"
+                               onClick={() => handleUpdateProblem(problem)}
                             >
                               <Edit className="w-4 h-4" />
                             </Button>
@@ -425,6 +431,7 @@ export default function ProblemsPage() {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onProblemAdd={fetchAllProblems}
+        problem={selectedProblem}
       />
       <NotesModal
         isOpen={isNotesModalOpen}

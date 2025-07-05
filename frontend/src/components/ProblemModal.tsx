@@ -20,17 +20,29 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ExternalLink } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import API from "@/lib/Axios";
 import { toast } from "sonner";
 import { Loader } from "./ui/loader";
 
 
+interface Problem {
+  id: number;
+  title: string;
+  topic: string;
+  difficulty: string;
+  link: string;
+  notes: string;
+  needRevision: boolean;
+  reference?: string;
+  createdAt: string;
+}
 
 interface ProblemModalProps {
   isOpen: boolean;
   onClose: () => void;
   onProblemAdd?: () => void;
+  problem?: Problem | null;
 }
 
 const topics = [
@@ -49,29 +61,57 @@ const topics = [
   "Backtracking",
 ];
 
-function ProblemModal({ isOpen, onClose, onProblemAdd }: ProblemModalProps) {
+const blankForm = {
+  title: "",
+  link: "",
+  topic: "",
+  difficulty: "",
+  reference: "",
+  notes: "",
+  needRevision: false,
+}
+
+function ProblemModal({ isOpen, onClose, onProblemAdd, problem }: ProblemModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [formData, setFormData] = useState({
-    title: "",
-    link: "",
-    topic: "",
-    difficulty: "",
-    reference: "",
-    notes: "",
-    needRevision: false,
-  });
+  const [formData, setFormData] = useState(blankForm);
+
+  useEffect(()=>{
+    if (problem) {
+      setFormData({
+        title: problem.title || "",
+        link: problem.link || "",
+        topic: problem.topic || "",
+        difficulty: problem.difficulty || "",
+        reference: problem.reference || "",
+        notes: problem.notes || "",
+        needRevision: problem.needRevision || false,
+      });
+    }
+    else {
+      setFormData(blankForm)
+    }
+  },[problem,isOpen])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setLoading(true);
       setError("");
-      const res = await API.post("/problems", formData);
-      toast.success(res?.data?.message || "Problem added successfully",{
-        //className: 'toast-success',
-        duration: 4000
-      })
+      if (problem) {
+        const res = await API.put(`/problems/${problem.id}`, formData);
+        toast.success(res?.data?.message || "Problem updated successfully",{
+          //className: 'toast-success',
+          duration: 4000
+        })
+      }
+      else {
+        const res = await API.post("/problems", formData);
+        toast.success(res?.data?.message || "Problem added successfully",{
+          //className: 'toast-success',
+          duration: 4000
+        })
+      }
       if (onProblemAdd) onProblemAdd()
       onClose();
       setFormData({
@@ -119,9 +159,14 @@ function ProblemModal({ isOpen, onClose, onProblemAdd }: ProblemModalProps) {
           <DialogHeader className="shrink-0 pb-4">
           {" "}
           {/* shrink-0 prevents header from shrinking */}
-          <DialogTitle className="text-white">Add New Problem</DialogTitle>
+          <DialogTitle className="text-white">
+            {problem ? "Edit Problem" : "Add New Problem"}
+          </DialogTitle>
           <DialogDescription className="text-slate-400">
-            Add a new problem to track your progress. Fill in the details below.
+          {problem
+            ? "Update the details for your problem below."
+            : "Add a new problem to track your progress. Fill in the details below."
+          }
           </DialogDescription>
         </DialogHeader>
           {/* pr-2 adds space for scrollbar */}
@@ -299,7 +344,7 @@ function ProblemModal({ isOpen, onClose, onProblemAdd }: ProblemModalProps) {
                 disabled={loading}
                 className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0"
               >
-                {loading ? <Loader variant="dots" size="md" /> : "Add Problem"}
+                {loading ? <Loader variant="dots" size="md" /> : problem ? "Edit Problem" : "Add Problem"}
               </Button>
             </DialogFooter>
           </form>
