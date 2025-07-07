@@ -23,7 +23,7 @@ export const getTopicWiseCount = async(req:Request, res:Response) => {
     try {
         const userId = (req as any).user.userId
         const result = await AnalyticsService.topicWiseCount(userId)
-        res.status(200).json({success:true, data:result})
+        res.status(200).json({success:true, result})
     } catch (err:unknown) {
 
         if (err instanceof Error){

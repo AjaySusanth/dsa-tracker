@@ -171,9 +171,6 @@ export function ChartLoader() {
     <div className="h-[300px] flex items-center justify-center">
       <div className="relative">
         <Loader variant="pulse" size="lg" />
-        <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2">
-          <span className="text-sm text-slate-400">Loading chart...</span>
-        </div>
       </div>
     </div>
   )

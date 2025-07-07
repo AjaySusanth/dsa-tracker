@@ -37,7 +37,7 @@ export const topicWiseCount = async(userId: number) => {
    
     return result.map((item)=> (
         {
-            topic: item.topic,
+            name: item.topic,
             count: item._count
         }
 

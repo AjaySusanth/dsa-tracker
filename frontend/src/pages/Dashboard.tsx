@@ -8,29 +8,40 @@ import { useEffect, useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import ProblemModal from "@/components/ProblemModal"
 import API from "@/lib/Axios"
-import { CardLoader } from "@/components/ui/loader"
+import { CardLoader, ChartLoader } from "@/components/ui/loader"
+import { useTopicSummary } from "@/hooks/useTopicSummary"
+
+ const TOPIC_COLORS: Record<string, string> = {
+  Array: "#8b5cf6",
+  String: "#06b6d4",
+  Tree: "#10b981",
+  Graph: "#f59e0b",
+  DP: "#ef4444",
+  Default: "#64748b",
+};
 
 
-const topicData = [
-  { name: "Arrays", value: 45, color: "#8b5cf6" },
-  { name: "Strings", value: 32, color: "#06b6d4" },
-  { name: "Trees", value: 28, color: "#10b981" },
-  { name: "Graphs", value: 15, color: "#f59e0b" },
-  { name: "DP", value: 12, color: "#ef4444" },
-]
 
 
 export default function Dashboard() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+
   const [totalProblems,setTotalProblems] = useState(0)
   const [difficultyData,setDifficultyData] = useState([
     { name: "Easy", value: 0, color: "#10b981" },
     { name: "Medium", value: 0, color: "#f59e0b" },
     { name: "Hard", value: 0, color: "#ef4444" },
   ])
+  
 
   const [loading,setLoading] = useState(true)
   const [error,setError] = useState("")
+
+  const { topicData, loading:topicLoading, error:topicError} = useTopicSummary()
+
+  const chartData = topicData.map(topic => ({
+    ...topic, color: TOPIC_COLORS[topic.name] || TOPIC_COLORS.Default
+  }))
 
 
   const fetchSummary = async() => {
@@ -139,29 +150,35 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="h-[300px] flex items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
+              {
+                topicLoading ? ( <ChartLoader/>) : 
+                topicError ? (  <div className="text-center text-red-400">{topicError}</div>)
+                : (
+                                <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={topicData}
+                    data={chartData}
                     cx="50%"
                     cy="50%"
                     innerRadius={80}
                     outerRadius={120}
                     paddingAngle={2}
-                    dataKey="value"
+                    dataKey="count"
                   >
-                    {topicData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    {chartData.map((entry) => (
+                      <Cell key={entry.name} fill={entry.color} />
                     ))}
                   </Pie>
                 </PieChart>
               </ResponsiveContainer>
+                )
+              }
             </div>
              <div className="flex flex-wrap gap-2 mt-4">
-              {topicData.map((topic) => (
+              {chartData.map((topic) => (
                 <Badge key={topic.name} variant="outline" className="border-slate-700 text-slate-300">
                   <div className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: topic.color }} />
-                  {topic.name}: {topic.value}
+                  {topic.name}: {topic.count}
                 </Badge>
               ))}
             </div>
