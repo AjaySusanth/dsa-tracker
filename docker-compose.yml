@@ -25,5 +25,15 @@ services:
     depends_on:
       - database
 
+  frontend:
+    build: ./frontend
+    container_name: dsatracker-frontend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - 8080:80
+    depends_on:
+      - backend
+
 volumes:
   pgdata:
