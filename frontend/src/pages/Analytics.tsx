@@ -127,7 +127,7 @@ export default function Analytics() {
             <TrendingUp className="h-4 w-4 text-orange-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">18 days</div>
+            <div className="text-2xl font-bold text-white">{summary.bestStreak} days</div>
             <p className="text-xs text-slate-500 mt-1">personal record</p>
           </CardContent>
         </Card>

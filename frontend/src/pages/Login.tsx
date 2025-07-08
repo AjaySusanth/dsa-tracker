@@ -26,7 +26,7 @@ function Login() {
         await login(form.email,form.password)
         navigate('/dashboard')
       } catch (err: any) {
-          setError(err?.response?.data.message || "Login failed")
+          setError(err?.response?.data?.message || err.message || "Login failed")
           console.log(err.message)
       } finally {
         setLoading(false)

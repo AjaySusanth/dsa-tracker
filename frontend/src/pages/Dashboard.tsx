@@ -27,6 +27,7 @@ export default function Dashboard() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
 
   const [totalProblems,setTotalProblems] = useState(0)
+  const [currentStreak,setCurrentStreak] = useState(0)
   const [difficultyData,setDifficultyData] = useState([
     { name: "Easy", value: 0, color: "#10b981" },
     { name: "Medium", value: 0, color: "#f59e0b" },
@@ -55,6 +56,7 @@ export default function Dashboard() {
       { name: "Hard", value:  res?.data?.summary.hard, color: "#ef4444" },
       ])
       setTotalProblems(res?.data?.summary.total)
+      setCurrentStreak(res?.data?.summary.currentStreak)
     } catch (err: any) {
       setError(err?.response?.data?.message || "Failed to fetch data")
       console.error("Dashboard fetch error",err);
@@ -108,7 +110,7 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-white mb-1">12 days</div>
+          <div className="text-3xl font-bold text-white mb-1">{currentStreak} days</div>
             <p className="text-sm text-slate-500">Keep it up! 🔥</p>
           </CardContent>
         </Card>

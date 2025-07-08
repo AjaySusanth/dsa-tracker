@@ -6,7 +6,9 @@ export function useFetchSummary() {
         total: 0,
         easy: 0,
         medium: 0,
-        hard: 0
+        hard: 0,
+        currentStreak:0,
+        bestStreak: 0
     })
     const [error,setError] = useState("")
     const [loading,setLoading] = useState(true)
@@ -24,7 +26,9 @@ export function useFetchSummary() {
                         total: res?.data?.summary.total,
                         easy: res?.data?.summary.easy,
                         medium: res?.data?.summary.medium,
-                        hard: res?.data?.summary.hard
+                        hard: res?.data?.summary.hard,
+                        currentStreak: res?.data?.summary?.currentStreak,
+                        bestStreak: res?.data?.summary?.bestStreak
                     })
                 }
             } catch (err: any) {

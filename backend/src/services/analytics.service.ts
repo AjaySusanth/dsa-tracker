@@ -19,11 +19,21 @@ export const getSummary = async(userId: number) => {
         where:{userId, difficulty: "Hard"}
     })
 
+    const user = await prisma.user.findUnique({
+        where:{id:userId},
+        select:{
+            currentStreak:true,
+            bestStreak:true
+        }
+    })
+
     return {
         total,
         easy,
         medium,
-        hard
+        hard,
+        currentStreak: user?.currentStreak,
+        bestStreak: user?.bestStreak
     }
 
 }
