@@ -21,6 +21,8 @@ import {
 import { useTopicSummary } from "@/hooks/useTopicSummary";
 import { useFetchSummary } from "@/hooks/useFetchSummary";
 import { ChartLoader } from "@/components/ui/loader";
+import { ContributionsChart } from "@/components/ContributionsChart";
+import { ActivityTimeChart } from "@/components/ActivityTimeChart";
 
 const dailyStatsData = [
   { date: "Jan 1", problems: 2, streak: 1 },
@@ -109,13 +111,13 @@ export default function Analytics() {
         <Card className="bg-slate-950/60 border-slate-800/30 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-slate-400">
-              Success Rate
+              Active Days
             </CardTitle>
             <Award className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">87%</div>
-            <p className="text-xs text-green-400 mt-1">+5% improvement</p>
+            <div className="text-2xl font-bold text-white">53</div>
+            <p className="text-xs text-green-400 mt-1">22 this month</p>
           </CardContent>
         </Card>
 
@@ -133,106 +135,18 @@ export default function Analytics() {
         </Card>
       </div>
 
-      {/* Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Daily Activity Chart */}
-        <Card className="bg-slate-950/60 border-slate-800/30 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="text-white">Daily Activity Trend</CardTitle>
-            <CardDescription className="text-slate-400">
-              Problems solved and streak over time
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={dailyStatsData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                  <XAxis dataKey="date" stroke="#64748b" />
-                  <YAxis stroke="#64748b" />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "rgba(15, 23, 42, 0.95)",
-                      border: "1px solid rgba(51, 65, 85, 0.3)",
-                      borderRadius: "8px",
-                      color: "#fff",
-                      backdropFilter: "blur(8px)",
-                    }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="problems"
-                    stroke="#8b5cf6"
-                    strokeWidth={2}
-                    dot={{ fill: "#8b5cf6", strokeWidth: 2, r: 4 }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="streak"
-                    stroke="#06b6d4"
-                    strokeWidth={2}
-                    dot={{ fill: "#06b6d4", strokeWidth: 2, r: 4 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
+ <div className="space-y-6 w-full">
+        {/* GitHub-style Contributions Chart */}
+        <div className="w-full">
+          <ContributionsChart userId={1} />
+        </div>
 
-        {/* Monthly Progress */}
-        <Card className="bg-slate-950/60 border-slate-800/30 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="text-white">Monthly Progress</CardTitle>
-            <CardDescription className="text-slate-400">
-              Total problems solved each month
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={monthlyData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                  <XAxis dataKey="month" stroke="#64748b" />
-                  <YAxis stroke="#64748b" />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "rgba(15, 23, 42, 0.95)",
-                      border: "1px solid rgba(51, 65, 85, 0.3)",
-                      borderRadius: "8px",
-                      color: "#fff",
-                      backdropFilter: "blur(8px)",
-                    }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="problems"
-                    stroke="#10b981"
-                    fill="url(#colorGradient)"
-                    strokeWidth={2}
-                  />
-                  <defs>
-                    <linearGradient
-                      id="colorGradient"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                      <stop
-                        offset="95%"
-                        stopColor="#10b981"
-                        stopOpacity={0.1}
-                      />
-                    </linearGradient>
-                  </defs>
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Activity Time Distribution Chart */}
+        <div className="w-full">
+          <ActivityTimeChart userId={1} />
+        </div>
       </div>
-
+      
       {/* Topic Performance */}
       <Card className="bg-slate-950/60 border-slate-800/30 backdrop-blur-sm">
         <CardHeader>
