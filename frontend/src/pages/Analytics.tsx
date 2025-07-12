@@ -7,46 +7,11 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, Target, Calendar, Award } from "lucide-react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-} from "recharts";
 import { useTopicSummary } from "@/hooks/useTopicSummary";
 import { useFetchSummary } from "@/hooks/useFetchSummary";
 import { ChartLoader } from "@/components/ui/loader";
 import { ContributionsChart } from "@/components/ContributionsChart";
 import { ActivityTimeChart } from "@/components/ActivityTimeChart";
-
-const dailyStatsData = [
-  { date: "Jan 1", problems: 2, streak: 1 },
-  { date: "Jan 2", problems: 3, streak: 2 },
-  { date: "Jan 3", problems: 1, streak: 3 },
-  { date: "Jan 4", problems: 4, streak: 4 },
-  { date: "Jan 5", problems: 2, streak: 5 },
-  { date: "Jan 6", problems: 5, streak: 6 },
-  { date: "Jan 7", problems: 3, streak: 7 },
-  { date: "Jan 8", problems: 6, streak: 8 },
-  { date: "Jan 9", problems: 2, streak: 9 },
-  { date: "Jan 10", problems: 4, streak: 10 },
-  { date: "Jan 11", problems: 3, streak: 11 },
-  { date: "Jan 12", problems: 7, streak: 12 },
-];
-
-const monthlyData = [
-  { month: "Aug", problems: 45 },
-  { month: "Sep", problems: 52 },
-  { month: "Oct", problems: 38 },
-  { month: "Nov", problems: 61 },
-  { month: "Dec", problems: 73 },
-  { month: "Jan", problems: 89 },
-];
 
 
 export default function Analytics() {
@@ -143,7 +108,7 @@ export default function Analytics() {
 
         {/* Activity Time Distribution Chart */}
         <div className="w-full">
-          <ActivityTimeChart userId={1} />
+          <ActivityTimeChart />
         </div>
       </div>
       
