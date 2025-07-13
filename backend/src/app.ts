@@ -20,6 +20,7 @@ app.use(express.json())
 app.use(morgan('dev'))
 app.use(cookieParser())
 
+
 app.use('/api/problems',authenticate,problemRoutes)
 app.use('/api/auth',authRoutes)
 app.use('/api/analytics',authenticate,analtyicRoutes)
