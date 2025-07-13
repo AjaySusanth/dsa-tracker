@@ -12,15 +12,22 @@ import { CardLoader, ChartLoader } from "@/components/ui/loader"
 import { useTopicSummary } from "@/hooks/useTopicSummary"
 import { useFetchSummary } from "@/hooks/useFetchSummary"
 
- const TOPIC_COLORS: Record<string, string> = {
-  Array: "#8b5cf6",
-  String: "#06b6d4",
-  Tree: "#10b981",
-  Graph: "#f59e0b",
-  DP: "#ef4444",
-  Default: "#64748b",
+const TOPIC_COLORS: Record<string, string> = {
+  "Arrays": "#8b5cf6",                // Purple
+  "Strings": "#06b6d4",               // Cyan
+  "Linked Lists": "#6366f1",          // Indigo
+  "Trees": "#10b981",                 // Green
+  "Graphs": "#f59e0b",                // Amber/Yellow
+  "Dynamic Programming": "#ef4444",   // Red
+  "Stacks": "#f43f5e",                // Pink
+  "Queues": "#f472b6",                // Light Pink
+  "Hash Tables": "#eab308",           // Gold
+  "Sorting": "#3b82f6",               // Blue
+  "Searching": "#0ea5e9",             // Light Blue
+  "Recursion": "#a21caf",             // Violet
+  "Backtracking": "#db2777",          // Magenta
+  "Default": "#64748b"                // Slate gray
 };
-
 
 
 
