@@ -3,8 +3,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Calendar } from "lucide-react"
 
-// Import necessary date-fns functions for mock data generation and date formatting
-import { subYears, addDays, format, eachDayOfInterval } from "date-fns"; 
+
 import API from "@/lib/Axios";
 
 interface ContributionDay {
@@ -117,9 +116,6 @@ export function ContributionsChart({ userId = 1 }: ContributionsChartProps) {
 
   // Calculate stats
   const totalProblems = contributionsData.reduce((sum, day) => sum + day.count, 0)
-  const activeDays = contributionsData.filter((day) => day.count > 0).length
-  const currentStreak = calculateCurrentStreak(contributionsData)
-  const longestStreak = calculateLongestStreak(contributionsData)
 
   // Group data by weeks
   const weeks: ContributionDay[][] = []
@@ -281,62 +277,4 @@ export function ContributionsChart({ userId = 1 }: ContributionsChartProps) {
       </CardContent>
     </Card>
   )
-}
-
-function calculateCurrentStreak(data: ContributionDay[]): number {
-  let currentStreak = 0;
-  if (data.length === 0) return 0;
-
-  const today = format(new Date(), 'yyyy-MM-dd');
-  const yesterday = format(addDays(new Date(), -1), 'yyyy-MM-dd');
-
-  // Check the last day in the data (which should be today)
-  const lastDayIndex = data.length - 1;
-  const lastDay = data[lastDayIndex];
-
-  // If today has activity
-  if (lastDay.date === today && lastDay.count > 0) {
-    currentStreak = 1; // Start streak from today
-    // Iterate backwards from yesterday
-    for (let i = lastDayIndex - 1; i >= 0; i--) {
-      const prevDay = data[i];
-      const prevDate = new Date(prevDay.date);
-      const expectedDate = addDays(new Date(data[i+1].date), -1); // Date of the previous day
-
-      // Check if previous day is truly consecutive and has activity
-      if (prevDay.count > 0 && format(prevDate, 'yyyy-MM-dd') === format(expectedDate, 'yyyy-MM-dd')) {
-        currentStreak++;
-      } else {
-        break; // Streak broken or non-consecutive day
-      }
-    }
-  } else if (lastDay.date === yesterday && lastDay.count > 0) {
-      // If yesterday was active but today is not (and today is the last data point with 0 activity)
-      // The current streak would be 0 because today broke it.
-      currentStreak = 0; // Streak broken.
-  }
-  // If the last day in data is not today/yesterday, or has 0 count, streak is 0.
-
-  return currentStreak;
-}
-
-
-function calculateLongestStreak(data: ContributionDay[]): number {
-  let maxStreak = 0
-  let currentStreak = 0
-
-  data.forEach((day, index) => {
-    if (day.count > 0) {
-      currentStreak++
-      // If it's not the first day and the previous day had 0 count, then it's a new streak segment
-      if (index > 0 && data[index - 1].count === 0) {
-          currentStreak = 1; // Reset if the previous day was inactive
-      }
-      maxStreak = Math.max(maxStreak, currentStreak)
-    } else {
-      currentStreak = 0 // Reset streak if current day has no activity
-    }
-  })
-
-  return maxStreak
 }

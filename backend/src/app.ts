@@ -12,7 +12,7 @@ import { authenticate } from './middlewares/auth.middleware'
 const app = express()
 
 app.use(cors({
-  origin: 'http://localhost:5173', // or your frontend domain
+  origin: 'http://localhost:8080', // or your frontend domain
   credentials: true
 }));
 
@@ -23,6 +23,10 @@ app.use(cookieParser())
 app.use('/api/problems',authenticate,problemRoutes)
 app.use('/api/auth',authRoutes)
 app.use('/api/analytics',authenticate,analtyicRoutes)
+
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
 
 app.get("/",(req,res)=>{
     res.send("DSA Tracker API running")
