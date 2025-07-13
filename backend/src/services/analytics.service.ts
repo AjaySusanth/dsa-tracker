@@ -1,4 +1,4 @@
-import { eachDayOfInterval, endOfDay, endOfToday, endOfWeek, format, startOfDay, startOfToday, startOfWeek, startOfYear, subDays, subYears } from "date-fns";
+import { eachDayOfInterval, endOfDay, endOfToday, endOfWeek, format, startOfDay, startOfToday, startOfWeek, subDays, subYears } from "date-fns";
 import { PrismaClient } from "../generated/prisma";
 import { getStreak } from "../utils/getStreak";
 
@@ -60,7 +60,35 @@ export const getSummary = async(userId: number) => {
     })
 
      const daysSoFarThisWeek = Math.max(1, Math.ceil((now.getTime() - weekStart.getTime()) / (1000 * 60 * 60 * 24)) + 1);
-     const avgPerDayThisWeek = problemsThisWeek / daysSoFarThisWeek
+     const avgPerDayThisWeek = Math.round(problemsThisWeek / daysSoFarThisWeek) 
+
+
+    const problems = await prisma.problem.findMany({
+        where:{userId},
+        select:{createdAt:true}
+    })
+    
+    const activeDaysSet = new Set<string>()
+    const activeDaysThisMonthSet = new Set<string>()
+    const currentYear = now.getFullYear()
+    const currentMonth = now.getMonth()
+
+
+    problems.forEach(p => {
+        const d = p.createdAt
+        const dateStr = p.createdAt.toISOString().slice(0,10)
+        activeDaysSet.add(dateStr)
+        if (d.getFullYear() === currentYear && d.getMonth() === currentMonth) {
+            activeDaysThisMonthSet.add(dateStr)
+        }
+    })
+
+    const activeDays = activeDaysSet.size
+    const activeDaysThisMonth = activeDaysThisMonthSet.size
+    const problemsThisMonth = problems.filter(p => {
+        const d = p.createdAt
+        return d.getFullYear() === currentYear && d.getMonth() === currentMonth
+    }).length
 
     return {
         total,
@@ -70,9 +98,12 @@ export const getSummary = async(userId: number) => {
         problemsToday,
         problemsYesterday,
         problemsThisWeek,
+        problemsThisMonth,
         avgPerDayThisWeek,
         currentStreak,
-        bestStreak
+        bestStreak,
+        activeDays,
+        activeDaysThisMonth
     }
 
 }

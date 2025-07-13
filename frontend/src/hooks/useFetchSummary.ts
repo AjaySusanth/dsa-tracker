@@ -10,9 +10,12 @@ export function useFetchSummary() {
         problemsToday: 0,
         problemsYesterday: 0,
         problemsThisWeek: 0,
+        problemsThisMonth: 0,
         avgThisWeek: 0,
         currentStreak:0,
-        bestStreak: 0
+        bestStreak: 0,
+        activeDays: 0,
+        activeDaysThisMonth: 0
     })
     const [error,setError] = useState("")
     const [loading,setLoading] = useState(true)
@@ -30,9 +33,12 @@ export function useFetchSummary() {
                 problemsToday: res?.data?.summary.problemsToday,
                 problemsYesterday: res?.data?.summary.problemsYesterday,
                 problemsThisWeek: res?.data?.summary.problemsThisWeek,
+                problemsThisMonth: res?.data?.summary.problemsThisMonth,
                 avgThisWeek: res?.data?.summary.avgPerDayThisWeek,
                 currentStreak: res?.data?.summary?.currentStreak,
-                bestStreak: res?.data?.summary?.bestStreak
+                bestStreak: res?.data?.summary?.bestStreak,
+                activeDays: res?.data?.summary.activeDays,
+                activeDaysThisMonth: res?.data?.summary.activeDaysThisMonth,
             })
         } catch (err: any) {
             setError(err?.response?.data?.message || "Failed to fetch summary data")

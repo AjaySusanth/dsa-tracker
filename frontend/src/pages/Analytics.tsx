@@ -32,8 +32,6 @@ export default function Analytics() {
     { name: "Hard", count: summary.hard, color: "#ef4444" },
   ];
 
-  const TOTAL_PROBLEMS = summary.total || 0;
-
   return (
     <div className="space-y-6 px-12 py-6">
       <div>
@@ -54,9 +52,9 @@ export default function Analytics() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-white">
-              {TOTAL_PROBLEMS}
+              {summary.total}
             </div>
-            <p className="text-xs text-green-400 mt-1">+23 this month</p>
+            <p className="text-xs text-green-400 mt-1">+{summary.problemsThisMonth} this month</p>
           </CardContent>
         </Card>
 
@@ -68,7 +66,8 @@ export default function Analytics() {
             <Calendar className="h-4 w-4 text-cyan-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">3.2</div>
+            <div className="text-2xl font-bold text-white">
+              {Math.round(summary.total / (summary.activeDays || 1))}</div>
             <p className="text-xs text-slate-500 mt-1">problems per day</p>
           </CardContent>
         </Card>
@@ -81,8 +80,8 @@ export default function Analytics() {
             <Award className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">53</div>
-            <p className="text-xs text-green-400 mt-1">22 this month</p>
+            <div className="text-2xl font-bold text-white">{summary.activeDays}</div>
+            <p className="text-xs text-green-400 mt-1">+{summary.activeDaysThisMonth} this month</p>
           </CardContent>
         </Card>
 
@@ -127,14 +126,14 @@ export default function Analytics() {
             <ChartLoader />
           ) : topicError ? (
             <div className="text-center text-red-400">{topicError}</div>
-          ) : TOTAL_PROBLEMS === 0 ? (
+          ) : summary.total === 0 ? (
             <div className="text-slate-400 text-center py-8">
               No problems solved yet.
             </div>
           ) : (
             topicData.map((topic) => {
-              const percent = TOTAL_PROBLEMS
-                ? (topic.count / TOTAL_PROBLEMS) * 100
+              const percent = summary.total
+                ? (topic.count / summary.total) * 100
                 : 0;
               return (
                 <div key={topic.name} className="space-y-2">
@@ -144,7 +143,7 @@ export default function Analytics() {
                         {topic.name}
                       </span>
                       <Badge className="bg-slate-800 text-slate-300 border-slate-700">
-                        {topic.count}/{TOTAL_PROBLEMS}
+                        {topic.count}/{summary.total}
                       </Badge>
                     </div>
                     <div className="text-right">
@@ -189,8 +188,8 @@ export default function Analytics() {
             <div className="text-center text-red-400">{summaryError}</div>
           ) : (
             difficultyData.map((level) => {
-              const percent = TOTAL_PROBLEMS
-                ? (level.count / TOTAL_PROBLEMS) * 100
+              const percent = summary.total
+                ? (level.count / summary.total) * 100
                 : 0;
               return (
                
@@ -224,7 +223,7 @@ export default function Analytics() {
                     <div>
                       <div className="font-medium text-white">{level.name}</div>
                       <div className="text-sm text-slate-400">
-                        {level.count} / {TOTAL_PROBLEMS} problems
+                        {level.count} / {summary.total} problems
                       </div>
                     </div>
                   </div>
