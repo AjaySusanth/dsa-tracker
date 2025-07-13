@@ -41,7 +41,7 @@ interface Problem {
 interface ProblemModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onProblemAdd?: () => void;
+  onProblemAdd?: () => void ;
   problem?: Problem | null;
 }
 

@@ -1,8 +1,3 @@
-import { differenceInCalendarDays } from "date-fns"
-import { PrismaClient } from "../generated/prisma"
-
-
-const prisma = new PrismaClient()
 
 export const calculateStreak = (contributions: {date: string, count: number}[]) => {
     let currentStreak = 0

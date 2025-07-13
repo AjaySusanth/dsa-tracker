@@ -4,12 +4,13 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Plus, TrendingUp, Target, Calendar, Flame } from "lucide-react"
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import ProblemModal from "@/components/ProblemModal"
-import API from "@/lib/Axios"
+
 import { CardLoader, ChartLoader } from "@/components/ui/loader"
 import { useTopicSummary } from "@/hooks/useTopicSummary"
+import { useFetchSummary } from "@/hooks/useFetchSummary"
 
  const TOPIC_COLORS: Record<string, string> = {
   Array: "#8b5cf6",
@@ -26,48 +27,18 @@ import { useTopicSummary } from "@/hooks/useTopicSummary"
 export default function Dashboard() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
 
-  const [totalProblems,setTotalProblems] = useState(0)
-  const [currentStreak,setCurrentStreak] = useState(0)
-  const [difficultyData,setDifficultyData] = useState([
-    { name: "Easy", value: 0, color: "#10b981" },
-    { name: "Medium", value: 0, color: "#f59e0b" },
-    { name: "Hard", value: 0, color: "#ef4444" },
-  ])
+  const {summary, loading:summaryLoading, error:summaryError, refetch} = useFetchSummary()
   
-
-  const [loading,setLoading] = useState(true)
-  const [error,setError] = useState("")
-
   const { topicData, loading:topicLoading, error:topicError} = useTopicSummary()
 
   const chartData = topicData.map(topic => ({
     ...topic, color: TOPIC_COLORS[topic.name] || TOPIC_COLORS.Default
   }))
-
-
-  const fetchSummary = async() => {
-    try {
-      setError("")
-      setLoading(true)
-      const res = await API.get('/analytics/summary')
-      setDifficultyData([
-      { name: "Easy", value: res?.data?.summary.easy, color: "#10b981" },
-      { name: "Medium", value:  res?.data?.summary.medium, color: "#f59e0b" },
-      { name: "Hard", value:  res?.data?.summary.hard, color: "#ef4444" },
-      ])
-      setTotalProblems(res?.data?.summary.total)
-      setCurrentStreak(res?.data?.summary.currentStreak)
-    } catch (err: any) {
-      setError(err?.response?.data?.message || "Failed to fetch data")
-      console.error("Dashboard fetch error",err);
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(()=> {
-    fetchSummary()
-  },[])
+  const difficultyData = [
+    { name: "Easy", value: summary.easy || 0, color: "#10b981" },
+    { name: "Medium", value: summary.medium || 0, color: "#f59e0b" },
+    { name: "Hard", value: summary.hard || 0, color: "#ef4444" },
+  ]
 
 
   return (
@@ -97,8 +68,10 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-white mb-1">7</div>
-            <p className="text-sm text-slate-500">+2 from yesterday</p>
+            <div className="text-3xl font-bold text-white mb-1">
+               {summary.problemsToday}
+            </div>
+            <p className="text-sm text-slate-500">+{summaryError ? "--" : summary.problemsYesterday} from yesterday</p>
           </CardContent>
         </Card>
 
@@ -110,7 +83,7 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent>
-          <div className="text-3xl font-bold text-white mb-1">{currentStreak} days</div>
+          <div className="text-3xl font-bold text-white mb-1">{summaryError ? "--" : summary.currentStreak} days</div>
             <p className="text-sm text-slate-500">Keep it up! 🔥</p>
           </CardContent>
         </Card>
@@ -123,7 +96,7 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-white mb-1">132</div>
+            <div className="text-3xl font-bold text-white mb-1">{summaryError ? "--" : summary.total}</div>
             <p className="text-sm text-slate-500">Across all topics</p>
           </CardContent>
         </Card>
@@ -136,8 +109,8 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-white mb-1">35</div>
-            <p className="text-sm text-slate-500">5 problems/day avg</p>
+            <div className="text-3xl font-bold text-white mb-1">{summaryError ? "--" : summary.problemsThisWeek}</div>
+            <p className="text-sm text-slate-500">{summaryError ? "--" : summary.avgThisWeek} problems/day avg</p>
           </CardContent>
         </Card>
       </div>
@@ -195,9 +168,9 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             {
-              loading ? <CardLoader/>
-              : error ? (
-                 <div className="text-center text-red-400">{error}</div>
+              summaryLoading ? <CardLoader/>
+              : summaryError ? (
+                 <div className="text-center text-red-400">{summaryError}</div>
               ) : (
                  <div className="space-y-4">
               {difficultyData.map((item) => (
@@ -207,7 +180,7 @@ export default function Dashboard() {
                     <span className="text-sm text-slate-400">{item.value} problems</span>
                   </div>
                   <Progress
-                    value={(item.value / totalProblems) * 100}
+                    value={(item.value / summary.total) * 100}
                     className="h-2"
                     style={{
                       background: "rgba(30, 41, 59, 0.5)",
@@ -228,7 +201,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
-            <ProblemModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onProblemAdd={fetchSummary} />
+            <ProblemModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onProblemAdd={refetch} />
       </div>
 
 

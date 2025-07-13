@@ -1,12 +1,6 @@
-import { eachDayOfInterval, endOfToday, format, startOfYear, subYears } from "date-fns";
+import { eachDayOfInterval, endOfDay, endOfToday, endOfWeek, format, startOfDay, startOfToday, startOfWeek, startOfYear, subDays, subYears } from "date-fns";
 import { PrismaClient } from "../generated/prisma";
-import { after } from "node:test";
 import { getStreak } from "../utils/getStreak";
-
-interface DailyCountType {
-    date: string;
-    count: number;
-}
 
 const prisma = new PrismaClient()
 
@@ -29,11 +23,54 @@ export const getSummary = async(userId: number) => {
 
     const {currentStreak, bestStreak} = await getStreak(userId)
 
+    const todayStart = startOfToday()
+    const todayEnd = endOfToday()
+    const problemsToday = await prisma.problem.count({
+        where:{
+            userId,
+            createdAt:{
+                gte: todayStart,
+                lte: todayEnd
+            }
+        }
+    })
+    const now = new Date()
+    const yesterdayStart = startOfDay(subDays(now,1))
+    const yesterdayEnd = endOfDay(subDays(now,1))
+    const problemsYesterday = await prisma.problem.count({
+        where:{
+            userId,
+            createdAt:{
+                gte: yesterdayStart,
+                lte: yesterdayEnd
+            }
+        }
+    })
+
+    const weekStart = startOfWeek(now,{weekStartsOn: 1})
+    const weekEnd = endOfWeek(now, {weekStartsOn: 1})
+    const problemsThisWeek = await prisma.problem.count({
+        where:{
+            userId,
+            createdAt:{
+                gte: weekStart,
+                lte: weekEnd
+            }
+        }
+    })
+
+     const daysSoFarThisWeek = Math.max(1, Math.ceil((now.getTime() - weekStart.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+     const avgPerDayThisWeek = problemsThisWeek / daysSoFarThisWeek
+
     return {
         total,
         easy,
         medium,
         hard,
+        problemsToday,
+        problemsYesterday,
+        problemsThisWeek,
+        avgPerDayThisWeek,
         currentStreak,
         bestStreak
     }
