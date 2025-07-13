@@ -1,13 +1,11 @@
 import { Request,Response } from "express";
 
 import * as ProblemService from '../services/problem.service'
-import { updateStreak } from "../utils/updateStreak";
 
 export const createProblem = async(req:Request,res:Response): Promise<void> => {
     try {
         const userId = (req as any).user.userId
         const problem = await ProblemService.createProblem(req.body,userId)
-        await updateStreak(userId)
         res.status(201).json({success:true,problem,message:"Problem created successfully"})
     } catch (err: unknown) {
         if (err instanceof Error){

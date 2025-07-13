@@ -1,6 +1,7 @@
 import { eachDayOfInterval, endOfToday, format, startOfYear, subYears } from "date-fns";
 import { PrismaClient } from "../generated/prisma";
 import { after } from "node:test";
+import { getStreak } from "../utils/getStreak";
 
 interface DailyCountType {
     date: string;
@@ -26,21 +27,15 @@ export const getSummary = async(userId: number) => {
         where:{userId, difficulty: "Hard"}
     })
 
-    const user = await prisma.user.findUnique({
-        where:{id:userId},
-        select:{
-            currentStreak:true,
-            bestStreak:true
-        }
-    })
+    const {currentStreak, bestStreak} = await getStreak(userId)
 
     return {
         total,
         easy,
         medium,
         hard,
-        currentStreak: user?.currentStreak,
-        bestStreak: user?.bestStreak
+        currentStreak,
+        bestStreak
     }
 
 }
