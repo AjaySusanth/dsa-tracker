@@ -27,8 +27,8 @@ jobs:
       - name: Write .env.prod for backend
         run: | 
           echo "PORT=4000" > backend/.env.prod
-          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> backend/.env.prod
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> backend/.env.prod
+          echo "DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@database:5432/${{ secrets.POSTGRES_DB }}" >> backend/.env.prod
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> backend/.env.prod  
           echo "JWT_EXPIRES_IN=7d" >> backend/.env.prod
 
       - name: Start containers
