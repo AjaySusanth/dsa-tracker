@@ -11,7 +11,7 @@ jobs:
         service: [frontend,backend]
     defaults:
       run:
-        working_directory: ./${{ matrix.service }}
+        working-directory: ./${{ matrix.service }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
