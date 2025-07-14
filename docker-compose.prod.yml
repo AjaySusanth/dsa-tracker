@@ -27,10 +27,11 @@ services:
     ports:
       - "4000:4000"
     healthcheck:
-      test: ["CMD","curl","-f","http://localhost:4000/api/health"]
+      test: ["CMD-SHELL", "sleep 5 && curl -f http://localhost:4000/api/health"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 2m
   frontend:
     image: dsatracker-frontend:latest
     container_name: dsatracker-frontend

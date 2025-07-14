@@ -8,6 +8,8 @@ RUN npm install
 
 COPY . .
 
+RUN apk --no-cache add curl
+
 
 EXPOSE 4000
 

@@ -59,7 +59,13 @@ jobs:
           done
           echo "Frontend not healthy in time"; exit 1
 
+      - name: Print backend logs on failure
+        if: failure()
+        run: docker logs dsatracker-api || true
+
       - name: Stop containers
         if: always()
         run: docker compose -f docker-compose.prod.yml down -v
+
+
         
