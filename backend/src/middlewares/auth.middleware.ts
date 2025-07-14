@@ -15,7 +15,8 @@ export const authenticate = (req:Request,res:Response,next:NextFunction) => {
         token = req.cookies.token;
     }
     if (!token) {
-        return res.status(401).json({ success: false, message: "Token missing" });
+        res.status(401).json({ success: false, message: "Token missing" });
+        return;
     }
     
     try {
