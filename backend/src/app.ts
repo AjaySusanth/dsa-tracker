@@ -12,7 +12,7 @@ import { authenticate } from './middlewares/auth.middleware'
 const app = express()
 
 app.use(cors({
-  origin: 'http://localhost:8080', // or your frontend domain
+  origin: process.env.FRONTEND_URL || 'http://localhost:8080', // or your frontend domain
   credentials: true
 }));
 
