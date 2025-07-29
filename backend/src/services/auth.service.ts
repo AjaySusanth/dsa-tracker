@@ -4,7 +4,7 @@ import { generateToken } from "../utils/jwt";
 
 const prisma = new PrismaClient()
 
-export const register = async(email: string, password: string) => {
+export const register = async(name:string,email: string, password: string) => {
     const existingUser = await prisma.user.findUnique({
         where:{email}
     })
@@ -16,7 +16,7 @@ export const register = async(email: string, password: string) => {
     const hashed = await hashPassword(password)
 
     const user = await prisma.user.create({
-        data:{email, password:hashed}
+        data:{name,email, password:hashed}
     })
 
     const token = generateToken(user.id)
@@ -43,7 +43,7 @@ export const login = async(email:string, password: string) => {
 export const getUser = async(userId: number) => {   
     const user = await prisma.user.findUnique({
         where: {id:userId},
-        select:{id:true,email:true,createdAt:true}
+        select:{id:true,email:true,name:true,createdAt:true}
     })
 
     return user

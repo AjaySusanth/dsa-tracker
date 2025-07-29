@@ -22,11 +22,6 @@ import { Loader } from "./ui/loader"
 import { toast } from "sonner"
 
 const data = {
-  user: {
-    name: "Alex Johnson",
-    email: "alex@example.com",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
   navMain: [
     {
       title: "Dashboard",
@@ -48,7 +43,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [loading, setLoading] = useState(false)
-  const { logout } = useAuth()
+  const { user,logout } = useAuth()
   const navigate = useNavigate()
 
 
@@ -115,17 +110,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground text-slate-300 hover:text-white hover:bg-slate-800"
                 >
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={data.user.avatar || "/placeholder.svg"} alt={data.user.name} />
+                    <AvatarImage src={"/placeholder.svg"} alt={user?.name} />
                     <AvatarFallback className="rounded-lg bg-gradient-to-r from-purple-500 to-cyan-500 text-white">
-                      {data.user.name
+                      {user?.name
                         .split(" ")
                         .map((n) => n[0])
                         .join("")}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">{data.user.name}</span>
-                    <span className="truncate text-xs text-slate-400">{data.user.email}</span>
+                    <span className="truncate font-semibold">{user?.name}</span>
+                    <span className="truncate text-xs text-slate-400">{user?.email}</span>
                   </div>
                 </SidebarMenuButton>
               </DropdownMenuTrigger>

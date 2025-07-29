@@ -11,6 +11,7 @@ import ProblemModal from "@/components/ProblemModal"
 import { CardLoader, ChartLoader } from "@/components/ui/loader"
 import { useTopicSummary } from "@/hooks/useTopicSummary"
 import { useFetchSummary } from "@/hooks/useFetchSummary"
+import { useAuth } from "@/hooks/useAuth"
 
 const TOPIC_COLORS: Record<string, string> = {
   "Arrays": "#8b5cf6",                // Purple
@@ -34,9 +35,9 @@ const TOPIC_COLORS: Record<string, string> = {
 export default function Dashboard() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
 
-  const {summary, loading:summaryLoading, error:summaryError, refetch} = useFetchSummary()
+  const {summary, loading:summaryLoading, error:summaryError, refetch:refetchSummary} = useFetchSummary()
   
-  const { topicData, loading:topicLoading, error:topicError} = useTopicSummary()
+  const { topicData, loading:topicLoading, error:topicError, refetch:refetchTopic} = useTopicSummary()
 
   const chartData = topicData.map(topic => ({
     ...topic, color: TOPIC_COLORS[topic.name] || TOPIC_COLORS.Default
@@ -47,13 +48,19 @@ export default function Dashboard() {
     { name: "Hard", value: summary.hard || 0, color: "#ef4444" },
   ]
 
+  const {user} = useAuth()
+
+  const handleProblemAdd  = () => {
+    refetchSummary()
+    refetchTopic()
+  }
 
   return (
     <div className="space-y-8 px-12 py-6">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-white mb-2">Welcome back, Alex! 👋</h1>
+          <h1 className="text-4xl font-bold text-white mb-2">Welcome back, {user?.name} ! 👋</h1>
           <p className="text-slate-400 text-lg">Here's your DSA progress overview</p>
         </div>
         <Button
@@ -135,7 +142,11 @@ export default function Dashboard() {
               {
                 topicLoading ? ( <ChartLoader/>) : 
                 topicError ? (  <div className="text-center text-red-400">{topicError}</div>)
-                : (
+                : topicData.length === 0 ? (
+                  <div className="text-slate-400 text-lg text-center">
+                    Add a problem to see topic-wise progress!
+                    </div>
+                ) :(
                                 <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -208,7 +219,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
-            <ProblemModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onProblemAdd={refetch} />
+            <ProblemModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onProblemAdd={handleProblemAdd} />
       </div>
 
 

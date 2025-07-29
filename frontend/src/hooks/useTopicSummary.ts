@@ -1,5 +1,5 @@
 import API from "@/lib/Axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export interface TopicData {
     name: string;
@@ -11,28 +11,23 @@ export function useTopicSummary() {
     const [error,setError] = useState("")
     const [loading,setLoading] = useState(true)
 
-    useEffect(()=> {
-        let mounted = true
-        
-        async function fetchTopicSummary() {
-            setLoading(true)
+    const fetchTopicSummary = useCallback(async()=>{
+        setLoading(true)
             setError("")
             try {
                 const res = await API.get('/analytics/topic')
-
-                if (mounted) setTopicData(res?.data?.result || [])
+                setTopicData(res?.data?.result || [])
                 console.log(res?.data?.result)
             } catch (err: any) {
-                 if (mounted) setError(err?.response?.data?.message || "Failed to fetch topic summary")
+                setError(err?.response?.data?.message || "Failed to fetch topic summary")
             } finally {
-                if (mounted) setLoading(false)
+                setLoading(false)
             }
-        }
-
-        fetchTopicSummary()
-
-        return () => { mounted = false}
     },[])
 
-    return {topicData, loading,error}
+    useEffect(()=> {
+        fetchTopicSummary()
+    },[fetchTopicSummary])
+
+    return {topicData, loading, error, refetch:fetchTopicSummary}
 }

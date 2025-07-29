@@ -9,13 +9,13 @@ const COOKIE_OPTIONS = {
 };
 
 export const register = async(req: Request,res:Response) => {
-    const {email,password} = req.body
+    const {name,email,password} = req.body
     try {
-        const {user,token} = await AuthService.register(email,password)
+        const {user,token} = await AuthService.register(name,email,password)
         res
         .cookie('token',token,COOKIE_OPTIONS)
         .status(201)
-        .json({success:true, user:{id: user.id, email: user.email},token})
+        .json({success:true, user:{id: user.id,name:user.name, email: user.email},token})
  
     } catch (err:unknown) {
 
