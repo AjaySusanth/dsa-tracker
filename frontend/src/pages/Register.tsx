@@ -12,7 +12,7 @@ function Register() {
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [loading,setLoading] = useState(false)
-    const [form,setForm] = useState({email: "", password:"",confirmPassword:""})
+    const [form,setForm] = useState({name:"",email: "", password:"",confirmPassword:""})
     const [error,setError] = useState("")
     const {register} = useAuth()
     const navigate = useNavigate()
@@ -27,7 +27,7 @@ function Register() {
       try {
         setLoading(true);
         setError("");
-        await register(form.email, form.password);
+        await register(form.name,form.email, form.password);
         navigate("/dashboard");
       } catch (err: any) {
         setError(err?.response?.data.message || "Sign up failed");
@@ -51,21 +51,20 @@ function Register() {
         </CardHeader>
         <CardContent>
           <form className="space-y-4" onSubmit={handleSubmit}>
-          {
-            /*            <div className="space-y-2">
+              <div className="space-y-2">
                         <Label htmlFor="name" className="text-slate-300">
-                          Full Name
+                          Name
                         </Label>
                         <Input
                           id="name"
                           type="text"
+                          value={form.name}
+                           onChange={(e)=>setForm({...form, name:e.target.value})}
                           placeholder="Enter your full name"
                           className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400 focus:border-purple-500 focus:ring-0 focus:ring-transparent focus:outline-none"
                           required
                         />
-                      </div>*/
-          }
-
+                      </div>
             <div className="space-y-2">
               <Label htmlFor="email" className="text-slate-300">
                 Email

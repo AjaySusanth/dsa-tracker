@@ -2,6 +2,7 @@ import { createContext, useEffect, useState, type ReactNode } from "react";
 import API from "./Axios";
 interface User {
     id: number
+    name: string
     email: string
 }
 
@@ -9,7 +10,7 @@ interface AuthContextType {
     user: User | null
     isAuthenticated: boolean
     loading: boolean
-    register: (email:string, password:string) => Promise<void>
+    register: (name:string,email:string, password:string) => Promise<void>
     login: (email:string, password:string) =>Promise<void>
     logout: ()=> Promise<void>
 
@@ -41,8 +42,8 @@ export const AuthProvider = ({children}:{children:ReactNode}) => {
         await fetchUser()
     }
 
-    const register  = async(email: string, password: string) => {
-        await API.post('/auth/register',{email,password})
+    const register  = async(name:string, email: string, password: string) => {
+        await API.post('/auth/register',{name,email,password})
         await fetchUser()
     }
 
